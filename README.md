@@ -20,8 +20,11 @@ Created by Tim Ling @ YSL lab
 ## Quickstart
 
   To run the program on the cluster, ensure that MDAnalysis is installed and Chimera is loaded.
-  You will need to change "/Applications/Chimera.app/Contents/MacOS/chimera" in chimScriptMaker.py to 
-  the binary of your installation of simply chimera if the module is loaded properly. 
+  You will need to change 
+  
+  	"/Applications/Chimera.app/Contents/MacOS/chimera" 
+	
+  in chimScriptMaker.py to the binary of your installation of simply chimera if the module is loaded properly. 
 	
   To run the program, simply do:
 
@@ -46,7 +49,7 @@ Created by Tim Ling @ YSL lab
   
 ## Examples:
 ### SESEaaDG-s1 with Omega angles labelled
-
+![](https://github.com/yling01/generate_initial/blob/master/Picture/SESEaaDG.png)
 
 
 ## Acknowledgments
