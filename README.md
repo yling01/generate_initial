@@ -28,9 +28,9 @@ Created by Tim Ling @ YSL lab
 	
   To run the program, simply do:
 
-				python main.py --seq SEQUENCE 
+	python main.py --seq SEQUENCE 
 
-	The program can also take the following flags:
+  The program can also take the following flags:
 		
     --cutoffRMSD: (float) the cutoff for RMSD between all structures. Default is 1.0.
     
