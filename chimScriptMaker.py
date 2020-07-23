@@ -15,7 +15,7 @@ def write_gly_pdb():
         fo.write("CONECT    5    3\n")
         fo.write("END\n")
 
-def createChimScript(seq, counter):
+def createChimScript(seq, counter, result_path):
     length = len(seq)
     phi = generate_angles(length)
     psi = generate_angles(length)
@@ -61,7 +61,7 @@ def createChimScript(seq, counter):
     chim.write("runCommand('~select :1.A@H')\n")
     chim.write("runCommand('delete sel')\n")
 
-    file_name = "%s/s%d.pdb" % (seq, counter)
+    file_name = "%s/%s/s%d.pdb" % (result_path, seq, counter)
     chim.write("runCommand('write #0 %s')\n" % file_name)
 
     chim.close()
@@ -94,7 +94,7 @@ def oneToThree(one):
 def generate_angles(length):
     return [random.randint(-180, 180) for _ in range(length)]
 
-def generate_structure(counter, seq):
-    file_name = createChimScript(seq, counter)
+def generate_structure(counter, seq, result_path="Result/"):
+    file_name = createChimScript(seq, counter, result_path)
     os.system("/Applications/Chimera.app/Contents/MacOS/chimera --script chimScript.py --nogui --silent &> /dev/null")
     return file_name

@@ -5,8 +5,9 @@ from MDAnalysis.analysis import distances
 from MDAnalysis.analysis.dihedrals import Dihedral
 import os
 import sys
-
-def get_ref(seq, file_name):
+import shutil
+def get_ref(seq, file_name, result_path):
+    seq = "/".join([result_path, seq])
     return ["/".join([seq, i]) for i in os.listdir(seq) if i[-3:] == "pdb" and "/".join([seq, i]) != file_name]
 
 def calculate_omega(u, start, stop, cyclic):
@@ -92,13 +93,23 @@ def check_cyclization(u, cutoff_bond, cyclic):
     bond_distance = mda.analysis.distances.dist(nTerm, cTerm)[2][0]
     return bond_distance <= cutoff_bond
 
-def check_structure(file_name, seq, cutoff_omega, cutoff_rmsd, cutoff_bond, cyclic):
+def recycle():
+    trash_path = "Discarded"
+    if os.path.exists(trash_path):
+        trash_files = [int(i.split("_")[0]) for i in os.listdir(trash_path) if i[-3:] == "pdb"]
+        trash_files.sort()
+        return trash_files[-1] if trash_files else 0
+    else:
+        os.mkdir(trash_path)
+        return 0
+
+def check_structure(file_name, seq, cutoff_omega, cutoff_rmsd, cutoff_bond, cyclic, result_path):
     u = mda.Universe(file_name)
     omega_angles = calculate_omega(u, 0, 1, cyclic)
     chirality = calculate_chirality(u, 0, 1)
     omega_mask = pick_out_trans(omega_angles, cutoff_omega)
     chirality_mask = pick_out_chirality(chirality, seq)
-    rmsd_mask = check_rmsd(u, get_ref(seq, file_name), cutoff_rmsd)
+    rmsd_mask = check_rmsd(u, get_ref(seq, file_name, result_path), cutoff_rmsd)
     cyclization_mask = check_cyclization(u, cutoff_bond, cyclic)
     if not (np.all(chirality_mask & omega_mask) and rmsd_mask and cyclization_mask):
         if not np.all(chirality_mask & omega_mask):
@@ -107,6 +118,9 @@ def check_structure(file_name, seq, cutoff_omega, cutoff_rmsd, cutoff_bond, cycl
             print("rmsd problem")
         if not cyclization_mask:
             print("cyclization problem")
-        os.remove(file_name)
+        file_dest = "Discarded/%d_%s.pdb" % (recycle() + 1, seq)
+        print("\nFile moved to %s\n" % file_dest)
+
+        shutil.move(file_name, file_dest)
         return False
     return True
