@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(1, 'source/')
 import optparse
 from chimScriptMaker import *
 from check import *
@@ -114,7 +116,7 @@ if __name__ == "__main__":
     os.remove("chimScript.py")
     os.remove("gly.pdb")
     os.remove("default.profraw")
-    shutil.rmtree("__pycache__")
+    shutil.rmtree("source/__pycache__")
 
     print("\n\
    ***\n\
