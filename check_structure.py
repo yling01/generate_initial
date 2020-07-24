@@ -1,4 +1,5 @@
 import MDAnalysis as mda
+from MDAnalysis.analysis import rms
 import os
 import sys
 import optparse
@@ -150,34 +151,55 @@ if __name__ == "__main__":
 
     sequence_list = os.listdir("Result")
     for sequence in sequence_list:
+        print("\n")
         print("=" * 80)
-        print("Checking %s..." % sequence)
+        print("\n")
+        print("Checking Sequence %s..." % sequence)
         structure_list = os.listdir("Result/%s" % sequence)
+        structure_list = [i for i in structure_list if i.split(".")[-1] == "pdb"]
+        structure_list.sort()
         structure_list = list(map(lambda x: "/".join(["Result", sequence, x]), structure_list))
         u_list = list(map(mda.Universe, structure_list))
         for i, u in enumerate(u_list):
-            print("\nChecking %s" % structure_list[i])
+            print("Checking Structure %s" % structure_list[i])
             omega_angle = calculate_omega(u, 0, 1, cyclic)
             chirality = calculate_chirality(u, 0, 1)
             mask1 = pick_out_trans(omega_angle, cutoffOmega)
             mask2 = pick_out_chirality(chirality, sequence)
             if not mask1.flatten()[0]:
-                print("\n!!!Cis Bond Found!!!\n")
+                print()
+                print("*" * 80)
+                print("!!!Cis Bond Found!!!")
+                print("*" * 80)
+                print()
             else:
-                print("\nNo Cis Bond Found\n")
+                print("No Cis Bond Found.")
             if not mask2.flatten()[0]:
-                print("\n!!!Chirality Not the Same As Declared!!!\n")
+                print()
+                print("*" * 80)
+                print("!!!Chirality Not the Same As Declared!!!")
+                print("*" * 80)
+                print()
             else:
-                print("\nChirality Is the Same As Declared\n")
+                print("Chirality Is the Same As Declared.")
             if check_cyclization(u, cutoffBond, cyclic):
-                print("\nHead To Tail Distance Is Less Than Cutoff\n")
+                print("Head To Tail Distance Is Less Than Cutoff.")
             else:
-                print("!!!\nHead To Tail Distance Is Greater Than Cutoff. Should Have Been Discarded!!!\n")
-            for j in range(i, len(structure_list)):
+                print()
+                print("*" * 80)
+                print("!!!Head To Tail Distance Is Greater Than Cutoff. Should Have Been Discarded!!!")
+                print("*" * 80)
+                print()
+            for j in range(i + 1, len(structure_list)):
                 rmsValue = check_rmsd(u, u_list[j])
                 if rmsValue < cutoffRMSD:
-                    print("\n!!!RMSD is %.3f. Should Have Been Discarded!!!\n" % rmsValue)
+                    print()
+                    print("*" * 80)
+                    print("!!!RMSD between s%d and s%d is %.3f. Should Have Been Discarded!!!" % (i + 1, j + 1, rmsValue))
+                    print("*" * 80)
+                    print()
                 else:
-                    print("\nRMSD is %.3f.\n" % rmsValue)
+                    print("RMSD between s%d and s%d is %.3f." % (i + 1, j + 1, rmsValue))
+            print()
 
 
