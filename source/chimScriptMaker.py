@@ -24,7 +24,7 @@ def createChimScript(seq, counter, result_path):
     chim.write("import chimera\n")
     chim.write("from chimera import runCommand\n")
     chim.write("runCommand('open gly.pdb')\n")
-    chim.write("runCommand('rotation 1 :1@C :1@CA')\n")
+    chim.write("runCommand('rotation 1 :1@N :1@CA')\n")
     chim.write("runCommand('rotation 1 %s')\n" % phi[0])
 
     chim.write("runCommand('~select :1@C :1@CA')\n")
@@ -87,6 +87,7 @@ def oneToThree(one):
               "S": "ser",
               "T": "thr",
               "V": "val",
+              "W": "trp",
               "Y": "tyr"}
 
     return aa_dic[one]
